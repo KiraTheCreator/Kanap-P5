@@ -88,6 +88,7 @@ button.addEventListener("click", (e) => {
       "Veuillez séléctionner une couleur et une quantité pour cet article."
     );
   } else {
+    const DifferentColorToCart = `${_id}-${colorSelected}`;
     // creation de la structure de l'objet pour le local storage
     const toAddToCart = {
       name: itemName,
@@ -99,7 +100,8 @@ button.addEventListener("click", (e) => {
       alt: altTxt,
     };
     // utilise l'objet créer et l'ajoute au local storage avec tout ses parametres tout en le stringify
-    localStorage.setItem(_id, JSON.stringify(toAddToCart));
+    localStorage.setItem(DifferentColorToCart, JSON.stringify(toAddToCart));
+    // accede a la page panier
     window.location.href = "cart.html";
   }
 });

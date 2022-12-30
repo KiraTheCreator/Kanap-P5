@@ -34,7 +34,7 @@ let h3;
 // Ensemble des canapés
 let itemList;
 
-// Ajoute tout les items dans le dom dans l'ordre da le array
+// Ajoute tout les items dans le dom dans l'ordre dans le array
 function addItems(data) {
   data.forEach((item) => {
     itemId = item._id;
