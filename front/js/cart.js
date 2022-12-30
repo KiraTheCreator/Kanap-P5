@@ -7,6 +7,9 @@ let item;
 // tableau contenant les objets JS issus du localstorage a ajouter dans le panier
 let cart = [];
 
+const button = document.getElementById("order");
+button.addEventListener("click", (e) => submitForm(e));
+
 convertLocalStorageObjects();
 // pour chaque élément du panier on appelle la fonction insertItemJs
 cart.forEach((item) => insertItem(item));
@@ -168,4 +171,75 @@ function insertImage(item) {
   image.alt = item.alt;
   divImage.appendChild(image);
   return divImage;
+}
+
+function submitForm(e) {
+  e.preventDefault();
+  if (cart.length === 0) {
+    alert("Ajoutez des articles à votre panier");
+    return;
+  }
+  if (formIsInvalide()) return;
+  const form = document.querySelector(".cart__order__form");
+  const body = requestForm();
+  fetch("http://localhost:3000/api/products/order", {
+    method: "post",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      const orderId = data.orderId;
+      window.location.href =
+        document.location.href = `confirmation.html?orderId=${orderId}`;
+    })
+    .catch((err) => console.log(err));
+  console.log(form.elements.firstName.value);
+}
+function formIsInvalide() {
+  const form = document.querySelector(".cart__order__form");
+  const inputs = form.querySelectorAll("input");
+  inputs.forEach((input) => {
+    if (input.value === "") {
+      alert("Veuillez remplir toutes les cases du formulaire");
+      return true;
+    }
+    return false;
+  });
+}
+
+function requestForm() {
+  const form = document.querySelector(".cart__order__form");
+  const firstName = form.elements.firstName.value;
+  const lastName = form.elements.lastName.value;
+  const address = form.elements.address.value;
+  const city = form.elements.city.value;
+  const email = form.elements.email.value;
+  const body = {
+    contact: {
+      firstName: firstName,
+      lastName: lastName,
+      address: address,
+      city: city,
+      email: email,
+    },
+    products: idsFromLocalStorage(),
+  };
+  console.log(body);
+  return body;
+}
+
+function idsFromLocalStorage() {
+  const numberOfIds = localStorage.length;
+  const ids = [];
+  for (let i = 0; i < numberOfIds; i++) {
+    const key = localStorage.key(i);
+    console.log(key);
+    const id = key.split("-")[0];
+    ids.push(id);
+  }
+  return ids;
 }
